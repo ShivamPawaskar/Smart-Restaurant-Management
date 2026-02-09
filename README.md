@@ -117,3 +117,49 @@ Covered critical units:
 - Auth password hashing + JWT claims
 - Role authorization middleware
 - Order item total and status transition rules
+
+## Deploy (Vercel + Backend Host)
+
+### Frontend on Vercel
+1. Push code to GitHub.
+2. In Vercel, import the repo.
+3. Set **Root Directory** to `frontend`.
+4. Build settings:
+  - Build Command: `npm run build`
+  - Output Directory: `dist`
+5. Add env var in Vercel:
+  - `VITE_API_URL=https://<your-backend-domain>/api`
+6. Deploy.
+
+`frontend/vercel.json` is included so React routes work on refresh.
+
+### Backend hosting (recommended: Render/Railway/VM)
+Your backend uses Socket.IO + SQLite file storage. This is not a good fit for Vercel serverless functions.
+
+Host backend separately on:
+- Render
+- Railway
+- VPS/EC2
+
+Then set:
+- backend `CLIENT_URL` to your Vercel frontend URL
+- frontend `VITE_API_URL` to backend `/api` URL
+
+### Render Backend (recommended)
+This repo includes `render.yaml` for backend deployment.
+
+1. Push code to GitHub.
+2. In Render, create **Blueprint** from repo (it will read `render.yaml`).
+3. In Render service env vars, set:
+  - `JWT_SECRET` = strong random secret
+  - `CLIENT_URL` = your Vercel frontend URL (for CORS + Socket.IO)
+4. Deploy.
+
+What this config does:
+- Deploys `backend` as Node web service
+- Mounts persistent disk at `/var/data`
+- Uses `SQLITE_PATH=/var/data/restaurant.sqlite`
+- Runs `npm run db:setup && npm start`
+
+Your frontend Vercel env should be:
+- `VITE_API_URL=https://<your-render-service>.onrender.com/api`
