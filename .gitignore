@@ -1,0 +1,16 @@
+node_modules
+dist
+.DS_Store
+.env
+.env.*
+coverage
+backend/node_modules
+frontend/node_modules
+frontend/dist
+backend/data/*.sqlite
+backend/data/*.sqlite-*
+*.log
+backend/dev.out.log
+backend/dev.err.log
+frontend/dev.out.log
+frontend/dev.err.log
