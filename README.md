@@ -163,3 +163,58 @@ What this config does:
 
 Your frontend Vercel env should be:
 - `VITE_API_URL=https://<your-render-service>.onrender.com/api`
+
+## Deploy on Railway (GitHub repo)
+
+This repo is a monorepo, so create **2 Railway services** from the same GitHub repository:
+- `backend` service (Node + SQLite + Socket.IO)
+- `frontend` service (Vite build served as static SPA)
+
+### 1) Push latest code to GitHub
+Railway will deploy from your GitHub repo branch.
+
+### 2) Create Railway project + backend service
+1. In Railway, click **New Project** -> **Deploy from GitHub repo**.
+2. Select this repository.
+3. For the backend service settings, set:
+   - **Root Directory**: `backend`
+   - **Build Command**: `npm ci`
+   - **Start Command**: `npm run db:setup && npm start`
+
+4. Add backend environment variables:
+   - `NODE_ENV=production`
+   - `JWT_SECRET=<strong-random-secret>`
+   - `JWT_EXPIRES_IN=8h`
+   - `SQLITE_PATH=/data/restaurant.sqlite`
+   - `CLIENT_URL=<your-frontend-public-url>` (set after frontend deploy)
+   - `CLIENT_URLS=<your-frontend-public-url>` (comma-separated if multiple domains)
+
+5. Add a Railway **Volume** and mount it at:
+   - `/data`
+
+6. Deploy backend and copy its public URL (for example `https://api-service.up.railway.app`).
+
+### 3) Create Railway frontend service (same repo)
+1. Add another service in the same Railway project from the same GitHub repository.
+2. Set frontend service settings:
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm ci && npm run build`
+   - **Start Command**: `npx serve -s dist -l $PORT`
+
+3. Add frontend environment variable:
+   - `VITE_API_URL=https://<your-backend-public-domain>/api`
+
+4. Deploy frontend and copy its public URL.
+
+### 4) Final env wiring
+After frontend is live, update backend env:
+- `CLIENT_URL=https://<your-frontend-public-domain>`
+- `CLIENT_URLS=https://<your-frontend-public-domain>`
+
+Redeploy backend so CORS + Socket.IO origin settings match the frontend domain.
+
+### 5) Smoke checks
+- Backend health: `https://<backend-domain>/api/health`
+- Frontend loads without blank page
+- Login/signup works
+- Real-time kitchen/manager updates work (Socket.IO)
