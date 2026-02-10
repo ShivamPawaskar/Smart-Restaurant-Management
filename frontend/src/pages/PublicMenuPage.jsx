@@ -38,12 +38,20 @@ const getSpiceLevel = (item) => {
 
 const getRating = (item) => Number(Math.min(4.9, 3.8 + ((item.id % 12) * 0.1)).toFixed(1));
 const getPopularity = (item) => 50 + ((item.id * 7) % 50);
-const getLocalBackupImage = (item) => `/menu/${((Number(item?.id || 1) - 1) % 12) + 1}.jpg`;
+const toMenuImageName = (name = "") =>
+  String(name)
+    .toLowerCase()
+    .replaceAll("&", "and")
+    .replaceAll(/[^a-z0-9]+/g, "-")
+    .replaceAll(/^-+|-+$/g, "");
+
 const getCardImage = (item) => {
-  if (item?.imageUrl) {
+  // Prefer deterministic local images so external/random URLs are removed.
+  const localByName = `/menu/${toMenuImageName(item?.name)}.jpg`;
+  if (item?.imageUrl && !String(item.imageUrl).includes("source.unsplash.com")) {
     return item.imageUrl;
   }
-  return getLocalBackupImage(item);
+  return localByName;
 };
 const TABLE_OPTIONS = Array.from({ length: 10 }, (_, i) => i + 1);
 
@@ -413,12 +421,6 @@ const PublicMenuPage = () => {
                   alt={item.name}
                   className="h-40 w-full object-cover"
                   onError={(e) => {
-                    const backup = getLocalBackupImage(item);
-                    if (!e.currentTarget.dataset.fallback) {
-                      e.currentTarget.dataset.fallback = "local";
-                      e.currentTarget.src = backup;
-                      return;
-                    }
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = "/menu-placeholder.svg";
                   }}
@@ -463,12 +465,6 @@ const PublicMenuPage = () => {
                   alt={item.name}
                   className="aspect-square w-full object-cover"
                   onError={(e) => {
-                    const backup = getLocalBackupImage(item);
-                    if (!e.currentTarget.dataset.fallback) {
-                      e.currentTarget.dataset.fallback = "local";
-                      e.currentTarget.src = backup;
-                      return;
-                    }
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = "/menu-placeholder.svg";
                   }}

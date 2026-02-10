@@ -25,6 +25,20 @@ const getDietType = (item) => {
   const text = `${item.name} ${item.description}`.toLowerCase();
   return NON_VEG_KEYWORDS.some((keyword) => text.includes(keyword)) ? "non-veg" : "veg";
 };
+const toMenuImageName = (name = "") =>
+  String(name)
+    .toLowerCase()
+    .replaceAll("&", "and")
+    .replaceAll(/[^a-z0-9]+/g, "-")
+    .replaceAll(/^-+|-+$/g, "");
+
+const getCardImage = (item) => {
+  const localByName = `/menu/${toMenuImageName(item?.name)}.jpg`;
+  if (item?.imageUrl && !String(item.imageUrl).includes("source.unsplash.com")) {
+    return item.imageUrl;
+  }
+  return localByName;
+};
 
 const CustomerDashboard = () => {
   const { token, user, updateUser } = useAuth();
@@ -157,7 +171,7 @@ const CustomerDashboard = () => {
             {menu.map((item) => (
               <article key={item.id} className="overflow-hidden rounded-xl border">
                 <img
-                  src={item.imageUrl}
+                  src={getCardImage(item)}
                   alt={item.name}
                   className="h-36 w-full object-cover"
                   onError={(e) => {
