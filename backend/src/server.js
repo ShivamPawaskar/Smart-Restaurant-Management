@@ -4,12 +4,15 @@ import app from "./app.js";
 import config from "./config/env.js";
 import { setIO } from "./config/socket.js";
 import { verifyToken } from "./services/authService.js";
+import { isAllowedOrigin } from "./config/cors.js";
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: config.clientUrls,
+    origin: (origin, callback) => {
+      callback(null, isAllowedOrigin(origin));
+    },
     credentials: true
   }
 });

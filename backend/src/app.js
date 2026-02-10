@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import config from "./config/env.js";
+import { corsOriginHandler } from "./config/cors.js";
 import authRoutes from "./routes/authRoutes.js";
 import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
@@ -14,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: config.clientUrls,
+    origin: corsOriginHandler,
     credentials: true
   })
 );
