@@ -67,7 +67,9 @@ const LoginPage = () => {
             : "/manager";
       navigate(nextPath, { replace: true });
     } catch (err) {
-      setError(err?.response?.data?.message || "Login failed");
+      const apiError = err?.response?.data;
+      const fieldMessage = apiError?.errors?.[0]?.msg;
+      setError(fieldMessage || apiError?.message || "Login failed");
     }
   };
 

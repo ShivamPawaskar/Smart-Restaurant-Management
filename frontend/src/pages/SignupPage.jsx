@@ -36,7 +36,9 @@ const SignupPage = () => {
             : "/manager";
       navigate(nextPath, { replace: true });
     } catch (err) {
-      setError(err?.response?.data?.message || "Signup failed");
+      const apiError = err?.response?.data;
+      const fieldMessage = apiError?.errors?.[0]?.msg;
+      setError(fieldMessage || apiError?.message || "Signup failed");
     }
   };
 
