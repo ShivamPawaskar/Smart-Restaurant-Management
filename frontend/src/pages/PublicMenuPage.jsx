@@ -40,11 +40,10 @@ const getRating = (item) => Number(Math.min(4.9, 3.8 + ((item.id % 12) * 0.1)).t
 const getPopularity = (item) => 50 + ((item.id * 7) % 50);
 const getLocalBackupImage = (item) => `/menu/${((Number(item?.id || 1) - 1) % 12) + 1}.jpg`;
 const getCardImage = (item) => {
-  const query = encodeURIComponent(`${item?.name || "indian food"},indian food`);
-  if (item?.imageUrl && !String(item.imageUrl).includes("source.unsplash.com")) {
+  if (item?.imageUrl) {
     return item.imageUrl;
   }
-  return `https://loremflickr.com/800/600/${query}`;
+  return getLocalBackupImage(item);
 };
 const TABLE_OPTIONS = Array.from({ length: 10 }, (_, i) => i + 1);
 
