@@ -9,6 +9,7 @@ frontend/node_modules
 frontend/dist
 backend/data/*.sqlite
 backend/data/*.sqlite-*
+!backend/data/restaurant.sqlite
 *.log
 backend/dev.out.log
 backend/dev.err.log
