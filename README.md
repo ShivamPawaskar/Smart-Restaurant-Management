@@ -1,4 +1,4 @@
-﻿# Restaurant Ordering & Management System 67
+﻿# Restaurant Ordering & Management System 89
 
 Full-stack restaurant platform with local SQLite, Node.js + Express REST API, JWT auth (single active session), RBAC, Socket.IO real-time updates, and React + Tailwind dashboards.
 
